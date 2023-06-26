@@ -1,3 +1,35 @@
+import { getDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import { firestoreDb } from "../main.js";
+
+const loggedOutLinks = document.querySelectorAll('.logged-out');
+const loggedInLinks = document.querySelectorAll('.logged-in');
+const accountDetails = document.querySelector('.account-details');
+
+export const setupUI = (user) => {
+    if (user) { 
+        getDoc(doc(firestoreDb, 'users', user.uid)).then(doc => {
+            //Account info
+            const html = `
+            <div>Logged in as ${user.email}</div>
+            <div>${doc.data().bio}</div>
+            `;
+            accountDetails.innerHTML = html;
+        })
+        
+        // Toggle UI elements
+        loggedInLinks.forEach(item => item.style.display = 'block');
+        loggedOutLinks.forEach(item => item.style.display = 'none');
+    } else {
+        // Hide account info
+        accountDetails.innerHTML = '';
+        // Toggle UI elements
+        loggedInLinks.forEach(item => item.style.display = 'none');
+        loggedOutLinks.forEach(item => item.style.display = 'block');
+    }
+}
+
+
+
 // Setup materialize components
 document.addEventListener('DOMContentLoaded', () => {
     let modals = document.querySelectorAll('.modal');
